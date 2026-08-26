@@ -46,7 +46,7 @@ RAW_DIR = (
     / "data"
     / "raw"
     / "external"
-    / "shiraz_fhs"
+    / "shiraz_fetal_heart_sound"
 )
 
 OUTPUT_DIR = (

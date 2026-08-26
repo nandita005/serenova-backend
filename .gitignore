@@ -55,3 +55,7 @@ checkpoints/
 *.db
 *.sqlite
 *.sqlite3
+!data/checkpoints/
+!data/checkpoints/fetal_health_best.pt
+!data/results/
+!data/results/fetal_health_xgboost_best.pkl
