@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# ML model artifacts
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.keras
+*.onnx
+*.safetensors
+
+# Datasets
+data/raw/
+data/processed/
+
+# Generated output
+outputs/
+artifacts/
+runs/
+checkpoints/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
