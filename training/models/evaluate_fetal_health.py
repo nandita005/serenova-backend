@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import numpy as np
 import xgboost as xgb
 
@@ -20,20 +21,34 @@ from sklearn.metrics import (
 # ============================================================
 
 DATASET = Path("data/processed/fetal_health")
-MODEL_PATH = Path("data/results/fetal_health_xgboost_best.pkl")
+
+# FINAL native XGBoost model
+MODEL_PATH = Path(
+    "data/results/fetal_health_xgboost_best.json"
+)
 
 
 # ============================================================
 # LOAD DATA
 # ============================================================
 
-X_test = np.load(DATASET / "X_test.npy")
-y_test = np.load(DATASET / "y_test.npy")
+X_test = np.load(
+    DATASET / "X_test.npy"
+)
+
+y_test = np.load(
+    DATASET / "y_test.npy"
+)
 
 
 print("=" * 70)
 print("SERENOVA — FETAL HEALTH PRODUCTION EVALUATION")
 print("=" * 70)
+
+
+# ============================================================
+# TEST DATA
+# ============================================================
 
 print()
 print("TEST DATA")
@@ -58,15 +73,22 @@ print("=" * 70)
 print("DATA INTEGRITY")
 print("=" * 70)
 
-print("Finite X:", np.isfinite(X_test).all())
-print("Finite y:", np.isfinite(y_test).all())
+print(
+    "Finite X:",
+    np.isfinite(X_test).all()
+)
+
+print(
+    "Finite y:",
+    np.isfinite(y_test).all()
+)
 
 assert np.isfinite(X_test).all()
 assert np.isfinite(y_test).all()
 
 
 # ============================================================
-# LOAD MODEL
+# MODEL
 # ============================================================
 
 print()
@@ -76,9 +98,20 @@ print("=" * 70)
 
 print("Loading:", MODEL_PATH)
 
+if not MODEL_PATH.exists():
+
+    raise FileNotFoundError(
+        f"\nFinal model not found:\n{MODEL_PATH}\n\n"
+        "Expected model:\n"
+        "data/results/fetal_health_xgboost_best.json"
+    )
+
+
 model = xgb.XGBClassifier()
 
-model.load_model(str(MODEL_PATH))
+model.load_model(
+    str(MODEL_PATH)
+)
 
 print("Model loaded successfully.")
 
@@ -92,11 +125,23 @@ print("=" * 70)
 print("PREDICTION")
 print("=" * 70)
 
-y_pred = model.predict(X_test)
-y_prob = model.predict_proba(X_test)
+y_pred = model.predict(
+    X_test
+)
 
-print("Prediction shape :", y_pred.shape)
-print("Probability shape:", y_prob.shape)
+y_prob = model.predict_proba(
+    X_test
+)
+
+print(
+    "Prediction shape :",
+    y_pred.shape
+)
+
+print(
+    "Probability shape:",
+    y_prob.shape
+)
 
 
 # ============================================================
@@ -140,11 +185,25 @@ print("=" * 70)
 print("OVERALL METRICS")
 print("=" * 70)
 
-print(f"Accuracy          : {accuracy:.4f}")
-print(f"Balanced Accuracy : {balanced_acc:.4f}")
-print(f"Macro Precision   : {precision:.4f}")
-print(f"Macro Recall      : {recall:.4f}")
-print(f"Macro F1          : {f1:.4f}")
+print(
+    f"Accuracy          : {accuracy:.4f}"
+)
+
+print(
+    f"Balanced Accuracy : {balanced_acc:.4f}"
+)
+
+print(
+    f"Macro Precision   : {precision:.4f}"
+)
+
+print(
+    f"Macro Recall      : {recall:.4f}"
+)
+
+print(
+    f"Macro F1          : {f1:.4f}"
+)
 
 
 # ============================================================
@@ -191,17 +250,35 @@ print("=" * 70)
 print("CLASS-WISE ERROR ANALYSIS")
 print("=" * 70)
 
-classes = np.unique(y_test)
+classes = np.unique(
+    y_test
+)
 
 for cls in classes:
 
-    actual = y_test == cls
-    predicted = y_pred == cls
+    actual = (
+        y_test == cls
+    )
 
-    tp = np.sum(actual & predicted)
-    fn = np.sum(actual & ~predicted)
-    fp = np.sum(~actual & predicted)
-    tn = np.sum(~actual & ~predicted)
+    predicted = (
+        y_pred == cls
+    )
+
+    tp = np.sum(
+        actual & predicted
+    )
+
+    fn = np.sum(
+        actual & ~predicted
+    )
+
+    fp = np.sum(
+        ~actual & predicted
+    )
+
+    tn = np.sum(
+        ~actual & ~predicted
+    )
 
     sensitivity = (
         tp / (tp + fn)
@@ -217,12 +294,30 @@ for cls in classes:
 
     print()
     print(f"CLASS {cls}")
-    print(f"  TP          : {tp}")
-    print(f"  FN          : {fn}")
-    print(f"  FP          : {fp}")
-    print(f"  TN          : {tn}")
-    print(f"  Sensitivity : {sensitivity:.4f}")
-    print(f"  Specificity : {specificity:.4f}")
+
+    print(
+        f"  TP          : {tp}"
+    )
+
+    print(
+        f"  FN          : {fn}"
+    )
+
+    print(
+        f"  FP          : {fp}"
+    )
+
+    print(
+        f"  TN          : {tn}"
+    )
+
+    print(
+        f"  Sensitivity : {sensitivity:.4f}"
+    )
+
+    print(
+        f"  Specificity : {specificity:.4f}"
+    )
 
 
 # ============================================================
@@ -319,9 +414,17 @@ print(
     f"{confidence.max():.4f}"
 )
 
-for threshold in [0.50, 0.60, 0.70, 0.80, 0.90]:
+for threshold in [
+    0.50,
+    0.60,
+    0.70,
+    0.80,
+    0.90,
+]:
 
-    mask = confidence >= threshold
+    mask = (
+        confidence >= threshold
+    )
 
     if np.sum(mask) == 0:
         continue
@@ -331,7 +434,9 @@ for threshold in [0.50, 0.60, 0.70, 0.80, 0.90]:
         y_pred[mask],
     )
 
-    coverage = np.mean(mask)
+    coverage = np.mean(
+        mask
+    )
 
     print(
         f"Confidence >= {threshold:.2f} | "
@@ -407,14 +512,30 @@ print(
 print()
 
 if accuracy >= 0.95:
-    print("Accuracy target        : PASS")
+
+    print(
+        "Accuracy target        : PASS"
+    )
+
 else:
-    print("Accuracy target        : FAIL")
+
+    print(
+        "Accuracy target        : FAIL"
+    )
+
 
 if f1 >= 0.90:
-    print("Macro F1 target        : PASS")
+
+    print(
+        "Macro F1 target        : PASS"
+    )
+
 else:
-    print("Macro F1 target        : REVIEW")
+
+    print(
+        "Macro F1 target        : REVIEW"
+    )
+
 
 print()
 print("MODEL STATUS:")
